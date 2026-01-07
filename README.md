@@ -34,31 +34,38 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**Note**: First run will download models automatically (~1.5GB):
+**Note**: First run will download models automatically (~3.7GB):
 - `sentence-transformers/all-mpnet-base-v2` (420MB)
 - `cross-encoder/ms-marco-MiniLM-L-6-v2` (90MB)
 - `TinyLlama/TinyLlama-1.1B-Chat-v1.0` (2.2GB)
 
-### Step 4: Download Datasets
+### Step 4: Download Preprocessed Datasets
 
-Download and prepare test data:
-```bash
-python scripts/download_hf_datasets.py
+**Download link**: [Dataset will be provided here]
+
+The dataset archive contains preprocessed data for all three benchmarks:
+
+```
+data/
+├── test/
+│   ├── ms_marco_test_100.json          # MS MARCO test queries (100)
+│   ├── hotpotqa_test_100.json          # HotpotQA test queries (100)
+│   └── fever_test_100.json             # FEVER test claims (100)
+└── processed/
+    ├── ms_marco_documents.json         # MS MARCO passages (indexed)
+    ├── hotpotqa_documents.json         # HotpotQA Wikipedia docs
+    └── fever_test_docs.json            # FEVER evidence documents
 ```
 
-This will:
-- Download MS MARCO, HotpotQA, FEVER from HuggingFace 
-- Create test sets (100 queries each)
-- Preprocess documents
-- Save to `data/test/` and `data/processed/`
+**After downloading**, extract to project root:
+```bash
+# Extract the archive
+unzip ma-rag-datasets.zip
 
-**Manual Alternative**: Place datasets in:
-- `data/test/ms_marco_test_100.json`
-- `data/test/hotpotqa_test_100.json`
-- `data/test/fever_test_100.json`
-- `data/processed/ms_marco_documents.json`
-- `data/processed/hotpotqa_documents.json`
-- `data/processed/fever_test_docs.json`
+# Verify structure
+ls data/test/
+ls data/processed/
+```
 
 ### Step 5: Run Prompting Ablation Study
 
@@ -79,7 +86,7 @@ This will:
 python show_prompt_results.py
 ```
 
-**Expected Runtime**: ~2-3 hours on GPU, ~8-10 hours on CPU
+**Expected Runtime**: ~2-3 hours on GPU (RTX 3080), ~8-10 hours on CPU
 
 ---
 
@@ -128,44 +135,60 @@ ceng543/
 │   ├── agents/          # Supervisor, Retriever, Ranker, Summarizer
 │   ├── generators/      # TinyLlama (baseline, CoT, few-shot)
 │   ├── evaluation/      # Metrics (MRR, MAP, nDCG, Faithfulness)
+│   ├── retrievers/      # BM25, Dense, Hybrid
+│   ├── rankers/         # Cross-encoder re-ranking
 │   └── pipeline/        # MA-RAG pipeline
 ├── config/
 │   ├── agent_config.yaml         # Baseline config
 │   ├── agent_config_cot.yaml     # Chain of Thought
-│   └── agent_config_fewshot.yaml # Few-Shot Learning
-├── data/
-│   ├── test/            # Test datasets (100 queries each)
-│   └── processed/       # Preprocessed documents
+│   ├── agent_config_fewshot.yaml # Few-Shot Learning
+│   ├── config_single_agent.yaml  # BM25 only
+│   └── config_no_ranker.yaml     # BM25 + Dense (no ranker)
+├── data/                         # Download from external link
+│   ├── test/                     # Test datasets
+│   └── processed/                # Preprocessed documents
 ├── experiments/
-│   └── results/         # JSON results
-├── scripts/
-│   └── download_hf_datasets.py  # Data download script
-├── run_prompt_ablation.py
-├── show_prompt_results.py
+│   └── results/                  # JSON results (generated)
+├── run_prompt_ablation.py        # Main experiment script
+├── show_prompt_results.py        # Results viewer
 └── requirements.txt
 ```
 
 ## 🔬 Technical Details
 
 **Models Used:**
-- Dense Retrieval: `all-mpnet-base-v2` (768-dim embeddings)
+- Dense Retrieval: `sentence-transformers/all-mpnet-base-v2` (768-dim)
 - Re-ranking: `cross-encoder/ms-marco-MiniLM-L-6-v2`
-- Generation: `TinyLlama-1.1B-Chat-v1.0`
+- Generation: `TinyLlama/TinyLlama-1.1B-Chat-v1.0`
 
 **Evaluation Metrics:**
 - Retrieval: MRR, MAP, nDCG@k, Recall@k, Precision@k
-- Generation: ROUGE-L, BLEU, Evidence Faithfulness
+- Generation: ROUGE-L, BLEU, Evidence Faithfulness, Citation Quality
 
 **Reproducibility:**
-- Fixed random seeds: Not explicitly set (deterministic model inference)
-- Identical test sets: 100 queries per dataset
-- Deterministic evaluation: Yes
+- Deterministic model inference
+- Fixed test sets: 100 queries per dataset
+- Consistent evaluation pipeline
 - Statistical significance: paired t-test (p < 0.05)
 
 **Hardware Requirements:**
-- GPU: 8GB+ VRAM (recommended)
-- RAM: 16GB minimum
-- Disk: 20GB for models and data
+- **GPU**: 8GB+ VRAM recommended (RTX 3060+)
+- **RAM**: 16GB minimum
+- **Disk**: 20GB (models + data + cache)
+
+## 🔗 Dataset Information
+
+**Test Datasets** (100 queries each):
+- **MS MARCO**: Web passage retrieval
+- **HotpotQA**: Multi-hop reasoning
+- **FEVER**: Fact verification
+
+**Preprocessed Documents**:
+- MS MARCO: ~8.8M passages (subset indexed)
+- HotpotQA: 991 Wikipedia articles
+- FEVER: 5.4M Wikipedia pages (subset indexed)
+
+**Dataset Download**: The preprocessed datasets are available at [link will be provided]. Total size: ~XXX MB compressed.
 
 ## 📝 Citation
 
@@ -181,3 +204,11 @@ ceng543/
 ## 📄 License
 
 MIT License
+
+---
+
+## 🙏 Acknowledgments
+
+- Sentence-Transformers for dense embeddings
+- MS MARCO, HotpotQA, FEVER benchmark datasets
+- TinyLlama for lightweight generation
