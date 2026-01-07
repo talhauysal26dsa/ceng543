@@ -1,0 +1,63 @@
+# No Ranker Configuration
+# BM25 + Dense retrieval but skip ranking step
+
+# Retriever Agent Configuration
+retriever_agent:
+  name: 'retriever_agent'
+  description: 'BM25 + Dense retrieval (no ranking)'
+  max_documents: 100
+  retrieval_strategies:
+    - 'bm25'
+    - 'dense'
+  bm25_config:
+    k1: 1.2
+    b: 0.75
+  dense_config:
+    model_name: 'sentence-transformers/all-mpnet-base-v2'
+    batch_size: 32
+    max_length: 512
+
+# Ranker Agent Configuration - DISABLED
+ranker_agent:
+  name: 'ranker_agent'
+  description: 'DISABLED - skip ranking entirely'
+  skip_ranking: true  # This flag disables cross-encoder ranking
+  max_documents: 20
+  model_config:
+    model_name: 'cross-encoder/ms-marco-MiniLM-L-6-v2'
+    batch_size: 16
+    max_length: 512
+
+# Summarizer Agent Configuration
+summarizer_agent:
+  name: 'summarizer_agent'
+  description: 'Evidence-grounded answer generation'
+  max_tokens: 512
+  temperature: 0.7
+  
+  # TinyLlama Local LLM
+  use_tinyllama: true
+  tinyllama_config:
+    model_name: 'TinyLlama/TinyLlama-1.1B-Chat-v1.0'
+    max_length: 512
+  
+  # API Mode (Gemini) - DISABLED
+  use_api: false
+  api_config:
+    api_key: 'AIzaSyDk52LaMO1y8QMkEFOmuAjzi6pQU9wJTRM'
+    model: 'gemini-2.5-flash'
+    temperature: 0.7
+    max_tokens: 512
+  
+  # Local Model Config (unused)
+  model_config:
+    model_name: 'microsoft/DialogPT-medium'
+    max_length: 1024
+
+# Supervisor Configuration
+supervisor:
+  name: 'supervisor'
+  description: 'Coordinator (skip ranking)'
+  max_iterations: 10
+  timeout: 300
+  decision_threshold: 0.8

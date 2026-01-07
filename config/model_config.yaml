@@ -1,0 +1,48 @@
+# Model Configuration for Multi-Agent RAG
+
+# Embedding Models
+embedding_models:
+  primary:
+    name: 'sentence-transformers/all-mpnet-base-v2'
+    dimension: 768
+    max_length: 512
+    batch_size: 32
+
+  secondary:
+    name: 'sentence-transformers/bge-large-en-v1.5'
+    dimension: 1024
+    max_length: 512
+    batch_size: 16
+
+# Cross-Encoder Models
+cross_encoder_models:
+  primary:
+    name: 'cross-encoder/ms-marco-MiniLM-L-6-v2'
+    max_length: 512
+    batch_size: 16
+
+  secondary:
+    name: 'cross-encoder/ms-marco-MiniLM-L-12-v2'
+    max_length: 512
+    batch_size: 8
+
+# Generation Models
+generation_models:
+  primary:
+    name: 'microsoft/DialoGPT-medium'
+    max_length: 1024
+    temperature: 0.7
+    top_p: 0.9
+
+  secondary:
+    name: 'gpt2-medium'
+    max_length: 1024
+    temperature: 0.7
+    top_p: 0.9
+
+# Model Loading Configuration
+model_loading:
+  device: 'auto' # auto, cpu, cuda
+  torch_dtype: 'float32'
+  trust_remote_code: false
+  use_auth_token: false

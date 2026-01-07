@@ -1,0 +1,53 @@
+# Dataset Configuration for Multi-Agent RAG
+
+# MS MARCO Dataset
+ms_marco:
+  name: 'MS MARCO'
+  description: 'Microsoft Machine Reading Comprehension dataset'
+  train_file: 'data/raw/ms_marco/train_v2.1.json'
+  dev_file: 'data/raw/ms_marco/dev_v2.1.json'
+  collection_file: 'data/raw/ms_marco/collection.tsv'
+  queries_file: 'data/raw/ms_marco/queries.tsv'
+  qrels_file: 'data/raw/ms_marco/qrels.tsv'
+  max_documents: 1000000
+  max_queries: 10000
+
+# TREC Deep Learning Track
+trec_dl:
+  name: 'TREC Deep Learning Track'
+  description: 'TREC Deep Learning Track dataset'
+  train_file: 'data/raw/trec_dl/train.json'
+  dev_file: 'data/raw/trec_dl/dev.json'
+  test_file: 'data/raw/trec_dl/test.json'
+  collection_file: 'data/raw/trec_dl/collection.tsv'
+  max_documents: 100000
+  max_queries: 1000
+
+# HotpotQA Dataset
+hotpotqa:
+  name: 'HotpotQA'
+  description: 'Multi-hop reasoning dataset'
+  train_file: 'data/raw/hotpotqa/train.json'
+  dev_file: 'data/raw/hotpotqa/dev.json'
+  test_file: 'data/raw/hotpotqa/test.json'
+  max_documents: 100000
+  max_queries: 1000
+
+# FEVER Dataset
+fever:
+  name: 'FEVER'
+  description: 'Fact verification dataset'
+  train_file: 'data/raw/fever/train.json'
+  dev_file: 'data/raw/fever/dev.json'
+  test_file: 'data/raw/fever/test.json'
+  max_documents: 100000
+  max_queries: 1000
+
+# Data Processing Configuration
+processing:
+  text_cleaning: true
+  remove_duplicates: true
+  min_document_length: 50
+  max_document_length: 2000
+  min_query_length: 5
+  max_query_length: 200

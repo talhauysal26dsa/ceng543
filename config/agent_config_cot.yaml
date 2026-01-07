@@ -1,0 +1,53 @@
+# Multi-Agent RAG Configuration - Chain of Thought Prompting
+# Uses step-by-step reasoning for improved generation quality
+
+# Retriever Agent Configuration
+retriever_agent:
+  name: 'retriever_agent'
+  description: 'BM25 + Dense retrieval (both cached for speed)'
+  max_documents: 100
+  retrieval_strategies:
+    - 'bm25'
+    - 'dense'
+  bm25_config:
+    k1: 1.2
+    b: 0.75
+  dense_config:
+    model_name: 'sentence-transformers/all-mpnet-base-v2'
+    batch_size: 32
+    max_length: 512
+
+# Ranker Agent Configuration
+ranker_agent:
+  name: 'ranker_agent'
+  description: 'Cross-encoder re-ranking of retrieved documents'
+  max_documents: 20
+  model_config:
+    model_name: 'cross-encoder/ms-marco-MiniLM-L-6-v2'
+    batch_size: 16
+    max_length: 512
+
+# Summarizer Agent Configuration - Chain of Thought
+summarizer_agent:
+  name: 'summarizer_agent'
+  description: 'Chain of Thought evidence-grounded answer generation'
+  max_tokens: 512
+  temperature: 0.7
+  prompt_mode: 'cot'  # Chain of Thought
+  
+  # TinyLlama Local LLM
+  use_tinyllama: true
+  tinyllama_config:
+    model_name: 'TinyLlama/TinyLlama-1.1B-Chat-v1.0'
+    max_length: 512
+  
+  # API Mode (Gemini) - DISABLED
+  use_api: false
+
+# Supervisor Configuration
+supervisor:
+  name: 'supervisor'
+  description: 'LangChain supervisor topology coordinator'
+  max_iterations: 10
+  timeout: 300
+  decision_threshold: 0.8
