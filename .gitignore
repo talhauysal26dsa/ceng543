@@ -28,13 +28,16 @@ wheels/
 *.pt
 checkpoints/
 
-# Data & Models
+# Data & Models  
 data/raw/*
 data/processed/*
 models/cache/*
 !models/cache/.gitkeep
 experiments/results/*.json
 experiments/plots/*.png
+
+# OLD PROTOTYPE CODE (not used)
+experiments/ablations/
 
 # IDE
 .vscode/

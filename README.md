@@ -34,9 +34,14 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Step 4: Download and Prepare Datasets
+**Note**: First run will download models automatically (~1.5GB):
+- `sentence-transformers/all-mpnet-base-v2` (420MB)
+- `cross-encoder/ms-marco-MiniLM-L-6-v2` (90MB)
+- `TinyLlama/TinyLlama-1.1B-Chat-v1.0` (2.2GB)
 
-Run the data download script:
+### Step 4: Download Datasets
+
+Download and prepare test data:
 ```bash
 python scripts/download_hf_datasets.py
 ```
@@ -152,9 +157,15 @@ ceng543/
 - Generation: ROUGE-L, BLEU, Evidence Faithfulness
 
 **Reproducibility:**
-- Fixed random seeds (42)
-- 100 queries per dataset
+- Fixed random seeds: Not explicitly set (deterministic model inference)
+- Identical test sets: 100 queries per dataset
+- Deterministic evaluation: Yes
 - Statistical significance: paired t-test (p < 0.05)
+
+**Hardware Requirements:**
+- GPU: 8GB+ VRAM (recommended)
+- RAM: 16GB minimum
+- Disk: 20GB for models and data
 
 ## 📝 Citation
 
