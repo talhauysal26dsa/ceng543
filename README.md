@@ -34,15 +34,26 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Step 4: Download Datasets
+### Step 4: Download and Prepare Datasets
 
-Download and prepare test data:
+Run the data download script:
 ```bash
-# MS MARCO test set (100 queries)
-# HotpotQA test set (100 queries)
-# FEVER test set (100 claims)
-# Place in data/test/ directory
+python scripts/download_hf_datasets.py
 ```
+
+This will:
+- Download MS MARCO, HotpotQA, FEVER from HuggingFace 
+- Create test sets (100 queries each)
+- Preprocess documents
+- Save to `data/test/` and `data/processed/`
+
+**Manual Alternative**: Place datasets in:
+- `data/test/ms_marco_test_100.json`
+- `data/test/hotpotqa_test_100.json`
+- `data/test/fever_test_100.json`
+- `data/processed/ms_marco_documents.json`
+- `data/processed/hotpotqa_documents.json`
+- `data/processed/fever_test_docs.json`
 
 ### Step 5: Run Prompting Ablation Study
 
@@ -117,8 +128,13 @@ ceng543/
 │   ├── agent_config.yaml         # Baseline config
 │   ├── agent_config_cot.yaml     # Chain of Thought
 │   └── agent_config_fewshot.yaml # Few-Shot Learning
-├── data/test/           # Test datasets (100 queries each)
-├── experiments/results/ # JSON results
+├── data/
+│   ├── test/            # Test datasets (100 queries each)
+│   └── processed/       # Preprocessed documents
+├── experiments/
+│   └── results/         # JSON results
+├── scripts/
+│   └── download_hf_datasets.py  # Data download script
 ├── run_prompt_ablation.py
 ├── show_prompt_results.py
 └── requirements.txt
