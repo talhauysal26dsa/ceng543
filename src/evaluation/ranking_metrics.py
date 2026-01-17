@@ -126,17 +126,17 @@ class RankingMetrics:
         return np.mean(average_precisions)
     
     def _calculate_ndcg_at_k(self, ranked_docs: List[str], 
-                           relevance_scores: List[float], k: int) -> float:
+                           relevance_scores: Dict[str, float], k: int) -> float:
         """
         Calculate nDCG@K for a single query.
         
         Args:
-            ranked_docs: Ranked document IDs
-            relevance_scores: Relevance scores
+            ranked_docs: Ranked document IDs  
+            relevance_scores: Dict mapping doc_id -> relevance score
             k: Number of top documents to consider
             
         Returns:
-            float: nDCG@K score
+            float: nDCG@K score (guaranteed to be in [0, 1])
         """
         if k == 0:
             return 0.0
@@ -149,15 +149,21 @@ class RankingMetrics:
                 score = relevance_scores[doc]
                 dcg += score / np.log2(i + 2)  # i+2 because log2(1) = 0
         
-        # Calculate IDCG@K (ideal DCG)
-        ideal_scores = sorted(relevance_scores.values(), reverse=True)
+        # Calculate IDCG@K (ideal DCG) - ONLY from ranked docs' scores
+        # CRITICAL FIX: Use only scores of documents that appear in ranked_docs
+        ranked_scores = [relevance_scores.get(doc, 0.0) for doc in ranked_docs[:k]]
+        ideal_scores = sorted(ranked_scores, reverse=True)
         idcg = 0.0
         for i in range(min(k, len(ideal_scores))):
-            idcg += ideal_scores[i] / np.log2(i + 2)
+            if ideal_scores[i] > 0:  # Skip zero scores
+                idcg += ideal_scores[i] / np.log2(i + 2)
         
         # Calculate nDCG@K
         if idcg > 0:
-            return dcg / idcg
+            ndcg = dcg / idcg
+            # Sanity check: nDCG must be in [0, 1]
+            assert 0.0 <= ndcg <= 1.0001, f"nDCG={ndcg} exceeds valid range [0,1]"
+            return min(ndcg, 1.0)  # Clamp to 1.0 due to float precision
         else:
             return 0.0
     

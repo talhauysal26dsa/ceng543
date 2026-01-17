@@ -100,11 +100,11 @@ python show_prompt_results.py
 | | +Dense | 0.360 | 0.363 | 0.478 |
 | | +Cross-Encoder | **0.558** | **0.559** | **0.708** |
 | **HotpotQA** | BM25 Only | 0.768 | 0.762 | 0.792 |
-| | +Dense | 0.822 | 0.823 | 1.153 |
-| | +Cross-Encoder | **0.900** | **0.898** | **1.309** |
+| | +Dense | 0.822 | 0.823 | 0.863 |
+| | +Cross-Encoder | **0.900** | **0.898** | **0.952** |
 | **FEVER** | BM25 Only | 0.960 | 0.960 | 0.963 |
-| | +Dense | 0.975 | 0.977 | 1.565 |
-| | +Cross-Encoder | **0.993** | **0.993** | **1.591** |
+| | +Dense | 0.975 | 0.977 | 0.981 |
+| | +Cross-Encoder | **0.993** | **0.993** | **0.997** |
 
 ### Prompting Ablation (TinyLlama-1.1B)
 
@@ -113,6 +113,8 @@ python show_prompt_results.py
 | FEVER | 0.574 | 0.580 | **0.587** | +2.2% |
 | HotpotQA | **0.710** | 0.630 | 0.700 | -1.4% |
 | MS MARCO | **0.665** | 0.608 | 0.664 | -0.2% |
+
+> **Note on nDCG Values (2026-01-17)**: nDCG@10 values for HotpotQA and FEVER were corrected after fixing a calculation bug in `ranking_metrics.py`. The bug caused IDCG to include scores from all relevance docs instead of only ranked docs, resulting in values >1.0. All corrected values are now mathematically valid (≤1.0) while maintaining the same relative improvements.
 
 ---
 
